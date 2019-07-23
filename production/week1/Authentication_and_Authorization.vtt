@@ -60,8 +60,8 @@ external identity services.
 
 13
 00:00:36.970 --> 00:00:40.739
-That's through both in Kubernetes
-clusters that you built yourself,
+That's true both in Kubernetes
+clusters that you build yourself,
 
 14
 00:00:40.739 --> 00:00:42.826
@@ -69,7 +69,7 @@ as well as in those GKE manages for you.
 
 15
 00:00:42.826 --> 00:00:44.937
-When you use Kubernetes clusters in GKA,
+When you use Kubernetes clusters in GKE,
 
 16
 00:00:44.937 --> 00:00:48.687
@@ -97,7 +97,7 @@ additional charge in most circumstances.
 
 21
 00:01:02.719 --> 00:01:06.443
-A cloud at any domain gives you much
+A cloud identity domain gives you much
 more organizational control than
 
 22
@@ -148,13 +148,13 @@ I'll tell you about later in this module.
 
 32
 00:01:32.522 --> 00:01:36.064
-GCP is a clouds identity and
-access management service or
+GCP's Cloud Identity and
+Access Management service, or
 
 33
 00:01:36.064 --> 00:01:40.289
-Cloud IAM is where buying permission
-in you GCP project to members.
+Cloud IAM, is where bind permissions
+in your GCP project to members.
 
 34
 00:01:40.289 --> 00:01:43.856
@@ -167,8 +167,8 @@ permission inside your clusters to.
 
 36
 00:01:45.769 --> 00:01:50.725
-Any cloud and any member can be configure
-as normal user GKE Kubernetes clusters.
+Any cloud identity member can be configured
+as a normal user in GKE Kubernetes clusters.
 
 37
 00:01:50.725 --> 00:01:52.269
@@ -176,7 +176,7 @@ In contrast to normal users,
 
 38
 00:01:52.269 --> 00:01:55.743
-Kubernetes service account
+Kubernetes service accounts
 are accounts manages by Kubernetes.
 
 39
@@ -215,7 +215,7 @@ accounts as a normal Kubernetes user if
 
 46
 00:02:19.837 --> 00:02:21.333
-that proven necessary.
+that proved necessary.
 
 47
 00:02:21.333 --> 00:02:25.490
@@ -225,7 +225,7 @@ a default Kubernetes service account.
 48
 00:02:25.490 --> 00:02:29.455
 When processes in containers within a pod
-communicate with the cube API server,
+communicate with the kubeapi-server,
 
 49
 00:02:29.455 --> 00:02:33.250
@@ -238,7 +238,7 @@ If you're security sensitive,
 
 51
 00:02:34.460 --> 00:02:37.210
-you won't be worried about these
+you might be worried about these
 Kubernetes service accounts.
 
 52
@@ -364,7 +364,7 @@ to define who can view or
 77
 00:03:52.103 --> 00:03:55.410
 change Kubernetes objects
-inside those cluster.
+inside those clusters.
 
 78
 00:03:55.410 --> 00:03:56.780
@@ -378,7 +378,7 @@ the principle of least privilege.
 80
 00:04:00.158 --> 00:04:05.135
 Each person who has access to your cluster
-should have the minimum set of permissions
+should have the minimal set of permissions
 
 81
 00:04:05.135 --> 00:04:06.127
