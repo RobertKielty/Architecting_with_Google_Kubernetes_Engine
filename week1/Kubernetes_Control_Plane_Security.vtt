@@ -1,0 +1,652 @@
+WEBVTT
+
+1
+00:00:00.080 --> 00:00:02.430
+Next, let's learn more about
+
+2
+00:00:02.430 --> 00:00:04.500
+Kubernetes Control
+Plane Security.
+
+3
+00:00:04.500 --> 00:00:09.165
+In GKE, all the master components
+such as the API server,
+
+4
+00:00:09.165 --> 00:00:10.860
+etcd database, and Controller
+
+5
+00:00:10.860 --> 00:00:12.825
+Manager are managed by Google.
+
+6
+00:00:12.825 --> 00:00:15.750
+Each cluster has its own
+root Certificate Authority,
+
+7
+00:00:15.750 --> 00:00:17.325
+(CA) for short.
+
+8
+00:00:17.325 --> 00:00:18.660
+An internal Google service
+
+9
+00:00:18.660 --> 00:00:20.565
+manages the root keys for the CA.
+
+10
+00:00:20.565 --> 00:00:22.665
+Secure communications
+between the master
+
+11
+00:00:22.665 --> 00:00:24.210
+and nodes at a cluster,
+
+12
+00:00:24.210 --> 00:00:25.680
+relies on the shared
+root of trust
+
+13
+00:00:25.680 --> 00:00:28.605
+provided by the certificates
+issued by the CA.
+
+14
+00:00:28.605 --> 00:00:32.040
+GKE uses a separate
+per cluster CA to
+
+15
+00:00:32.040 --> 00:00:33.195
+provide certificates for the
+
+16
+00:00:33.195 --> 00:00:35.340
+etcd databases within a cluster.
+
+17
+00:00:35.340 --> 00:00:36.860
+You don't have to do
+anything to turn on
+
+18
+00:00:36.860 --> 00:00:38.900
+this feature, it's automatic.
+
+19
+00:00:38.900 --> 00:00:40.820
+Remember kubelets, which were
+
+20
+00:00:40.820 --> 00:00:42.940
+the primary Kubernetes
+agents on the nodes?
+
+21
+00:00:42.940 --> 00:00:45.920
+The Kubernetes API server
+and the kubelets
+
+22
+00:00:45.920 --> 00:00:48.265
+use secured network
+communications protocols,
+
+23
+00:00:48.265 --> 00:00:52.070
+namely TLS and SSH when they
+communicate with each other.
+
+24
+00:00:52.070 --> 00:00:54.080
+They use certificates
+issued by the clusters
+
+25
+00:00:54.080 --> 00:00:56.845
+root CA to support
+those protocols.
+
+26
+00:00:56.845 --> 00:01:00.365
+Because separate CA's are used
+for each separate cluster,
+
+27
+00:01:00.365 --> 00:01:02.480
+a compromised CA of one cluster
+
+28
+00:01:02.480 --> 00:01:04.895
+cannot be used to
+compromise other clusters.
+
+29
+00:01:04.895 --> 00:01:08.120
+When a new node of
+a Kubernetes cluster is created,
+
+30
+00:01:08.120 --> 00:01:10.040
+the node is injected
+with a shared secret
+
+31
+00:01:10.040 --> 00:01:11.630
+as part of its creation.
+
+32
+00:01:11.630 --> 00:01:14.240
+This secret is then
+used by its kubelet to
+
+33
+00:01:14.240 --> 00:01:15.860
+submit certificate
+signing requests
+
+34
+00:01:15.860 --> 00:01:17.335
+to the cluster root CA.
+
+35
+00:01:17.335 --> 00:01:19.340
+That way, it can get
+client certificates
+
+36
+00:01:19.340 --> 00:01:20.780
+when the node is created,
+
+37
+00:01:20.780 --> 00:01:22.070
+and new certificates
+when they need
+
+38
+00:01:22.070 --> 00:01:23.875
+to be renewed or rotated.
+
+39
+00:01:23.875 --> 00:01:25.970
+Kubelets use these
+client certificates to
+
+40
+00:01:25.970 --> 00:01:28.520
+communicate securely
+with the API server.
+
+41
+00:01:28.520 --> 00:01:30.620
+Note that the secret
+can be accessed by
+
+42
+00:01:30.620 --> 00:01:32.930
+pods and by extension
+their containers,
+
+43
+00:01:32.930 --> 00:01:35.195
+unless metadata
+concealment is enabled.
+
+44
+00:01:35.195 --> 00:01:36.200
+I'll tell you more about
+
+45
+00:01:36.200 --> 00:01:37.925
+metadata concealment in a minute.
+
+46
+00:01:37.925 --> 00:01:39.980
+It's essential that these
+credentials are rotated
+
+47
+00:01:39.980 --> 00:01:42.260
+periodically to improve
+the security posture
+
+48
+00:01:42.260 --> 00:01:44.120
+of your cluster and
+limit the impact of
+
+49
+00:01:44.120 --> 00:01:45.485
+a potential security breach
+
+50
+00:01:45.485 --> 00:01:47.480
+that can compromise credentials.
+
+51
+00:01:47.480 --> 00:01:49.190
+So how often should you ever take
+
+52
+00:01:49.190 --> 00:01:50.675
+credentials? Well,
+it's a trade off.
+
+53
+00:01:50.675 --> 00:01:52.745
+If a cluster manages
+high-value assets,
+
+54
+00:01:52.745 --> 00:01:54.860
+you probably want to
+rotate credentials often.
+
+55
+00:01:54.860 --> 00:01:56.860
+But whenever you
+do, the clusters to
+
+56
+00:01:56.860 --> 00:01:59.410
+API servers unavailable for
+a short period of time.
+
+57
+00:01:59.410 --> 00:02:01.355
+So you need to make sure
+that that trade-off
+
+58
+00:02:01.355 --> 00:02:03.725
+works for your organization
+security policies.
+
+59
+00:02:03.725 --> 00:02:05.510
+You'll learn how
+to manually rotate
+
+60
+00:02:05.510 --> 00:02:06.650
+the credentials used by
+
+61
+00:02:06.650 --> 00:02:09.395
+the API server and clients
+during a lot of activity.
+
+62
+00:02:09.395 --> 00:02:12.080
+Note that you can't manually
+rotate the etcd certificates
+
+63
+00:02:12.080 --> 00:02:15.320
+and GKE since they are
+managed entirely by Google.
+
+64
+00:02:15.320 --> 00:02:18.290
+Let's look at an overview
+of the rotation process.
+
+65
+00:02:18.290 --> 00:02:20.990
+The process starts by
+creating a new IP address for
+
+66
+00:02:20.990 --> 00:02:24.380
+the cluster master along with
+its existing IP address.
+
+67
+00:02:24.380 --> 00:02:27.020
+New credentials are issued
+to the control plane.
+
+68
+00:02:27.020 --> 00:02:29.060
+Note that the API
+server will not be
+
+69
+00:02:29.060 --> 00:02:30.065
+available during this period
+
+70
+00:02:30.065 --> 00:02:32.075
+although pods continue to run.
+
+71
+00:02:32.075 --> 00:02:34.309
+After the masters reconfigured,
+
+72
+00:02:34.309 --> 00:02:35.990
+the nodes are
+automatically updated by
+
+73
+00:02:35.990 --> 00:02:39.140
+GKE to use the new IP
+and credentials.
+
+74
+00:02:39.140 --> 00:02:41.555
+This causes GKE to
+also automatically
+
+75
+00:02:41.555 --> 00:02:42.950
+upgrade the node version to
+
+76
+00:02:42.950 --> 00:02:45.245
+the closest supported version.
+
+77
+00:02:45.245 --> 00:02:48.160
+All of your API clients
+outside the cluster
+
+78
+00:02:48.160 --> 00:02:51.425
+must also be updated to
+use the new credentials.
+
+79
+00:02:51.425 --> 00:02:53.300
+Rotation must be completed
+
+80
+00:02:53.300 --> 00:02:54.500
+for the cluster master to start
+
+81
+00:02:54.500 --> 00:02:57.080
+serving with the new IP address
+and new credentials,
+
+82
+00:02:57.080 --> 00:02:59.720
+and remove the old IP address
+and old credentials.
+
+83
+00:02:59.720 --> 00:03:02.120
+If the rotation is not
+completed manually,
+
+84
+00:03:02.120 --> 00:03:03.680
+GKE will automatically complete
+
+85
+00:03:03.680 --> 00:03:05.920
+the rotation after seven days.
+
+86
+00:03:05.920 --> 00:03:07.910
+Note that you can also rotate
+
+87
+00:03:07.910 --> 00:03:09.410
+the IP address for your cluster.
+
+88
+00:03:09.410 --> 00:03:11.810
+This essentially goes through
+the same process because
+
+89
+00:03:11.810 --> 00:03:13.280
+their certificates
+must be renewed
+
+90
+00:03:13.280 --> 00:03:15.395
+when the master IP
+address is changed,
+
+91
+00:03:15.395 --> 00:03:17.810
+but with different commands
+as shown here.
+
+92
+00:03:17.810 --> 00:03:21.110
+In these example, name
+refers to the cluster name.
+
+93
+00:03:21.110 --> 00:03:22.895
+Pods can access the metadata
+
+94
+00:03:22.895 --> 00:03:24.320
+of the nodes that
+they're running on,
+
+95
+00:03:24.320 --> 00:03:25.640
+such as the node secret that
+
+96
+00:03:25.640 --> 00:03:27.275
+is used for node configuration.
+
+97
+00:03:27.275 --> 00:03:28.820
+If a pod is compromised,
+
+98
+00:03:28.820 --> 00:03:31.310
+this could potentially be
+used in unintended ways.
+
+99
+00:03:31.310 --> 00:03:32.915
+To prevent such exposure,
+
+100
+00:03:32.915 --> 00:03:34.825
+there are a few steps
+that you can take.
+
+101
+00:03:34.825 --> 00:03:36.800
+First, you should
+always configure
+
+102
+00:03:36.800 --> 00:03:38.510
+the Cloud IAM service account
+
+103
+00:03:38.510 --> 00:03:41.090
+for the node with
+minimal permissions.
+
+104
+00:03:41.090 --> 00:03:43.100
+Don't confuse as
+Google service account
+
+105
+00:03:43.100 --> 00:03:44.675
+with the Kurbenetes
+Service a account.
+
+106
+00:03:44.675 --> 00:03:46.760
+This is the Cloud IAM
+service account
+
+107
+00:03:46.760 --> 00:03:49.030
+used by the node VM itself.
+
+108
+00:03:49.030 --> 00:03:52.060
+Don't use the
+compute.instances.get
+
+109
+00:03:52.060 --> 00:03:53.700
+permission through
+service account,
+
+110
+00:03:53.700 --> 00:03:55.440
+compute instance admin role,
+
+111
+00:03:55.440 --> 00:03:57.180
+or any custom roles.
+
+112
+00:03:57.180 --> 00:03:59.620
+Omitting this permission
+blocks holders
+
+113
+00:03:59.620 --> 00:04:01.180
+of the role from
+getting metadata on
+
+114
+00:04:01.180 --> 00:04:02.770
+GKE nodes by making
+
+115
+00:04:02.770 --> 00:04:06.025
+direct Compute Engine API
+calls to those nodes.
+
+116
+00:04:06.025 --> 00:04:08.410
+The second step that
+you should take is to
+
+117
+00:04:08.410 --> 00:04:10.900
+disable legacy metadata APIs.
+
+118
+00:04:10.900 --> 00:04:13.090
+Compute Engine API
+endpoints using
+
+119
+00:04:13.090 --> 00:04:16.180
+versions 0.1 and V1 beta-1,
+
+120
+00:04:16.180 --> 00:04:17.890
+support querying of metadata.
+
+121
+00:04:17.890 --> 00:04:20.995
+The V1 APIs restrict
+the retrieval of metadata.
+
+122
+00:04:20.995 --> 00:04:23.955
+Starting from GKE version 1.12,
+
+123
+00:04:23.955 --> 00:04:26.590
+the legacy Compute Engine
+metadata endpoints are disabled
+
+124
+00:04:26.590 --> 00:04:29.310
+by default and with
+earlier versions,
+
+125
+00:04:29.310 --> 00:04:30.940
+they can only be
+disabled by creating
+
+126
+00:04:30.940 --> 00:04:32.440
+a new cluster or adding
+
+127
+00:04:32.440 --> 00:04:34.770
+a new node port to
+an existing cluster.
+
+128
+00:04:34.770 --> 00:04:37.100
+One further important
+security step
+
+129
+00:04:37.100 --> 00:04:39.170
+is to enable metadata
+concealment.
+
+130
+00:04:39.170 --> 00:04:40.910
+This is basically a firewall that
+
+131
+00:04:40.910 --> 00:04:43.280
+prevents pod from accessing
+a nodes metadata.
+
+132
+00:04:43.280 --> 00:04:45.110
+It does this by
+restricting access
+
+133
+00:04:45.110 --> 00:04:46.865
+to cube NF which contains
+
+134
+00:04:46.865 --> 00:04:48.500
+cubic credentials and
+
+135
+00:04:48.500 --> 00:04:50.885
+the virtual machines instance
+identity token.
+
+136
+00:04:50.885 --> 00:04:53.260
+Note that this is a temporary
+solution that will be
+
+137
+00:04:53.260 --> 00:04:54.950
+deprecated as better
+security improvements
+
+138
+00:04:54.950 --> 00:04:56.585
+are developed in the future.
+
+139
+00:04:56.585 --> 00:04:58.670
+There's a link associated
+with this lesson to
+
+140
+00:04:58.670 --> 00:05:00.110
+Google Cloud's documentation
+
+141
+00:05:00.110 --> 00:05:02.910
+on protecting cluster metadata.
