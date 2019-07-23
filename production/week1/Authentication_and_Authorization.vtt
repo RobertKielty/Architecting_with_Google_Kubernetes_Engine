@@ -1,0 +1,467 @@
+WEBVTT
+
+1
+00:00:00.941 --> 00:00:03.781
+Let's start with authentication and
+authorization.
+
+2
+00:00:03.781 --> 00:00:06.752
+In this first lesson,
+you will learn about how user and
+
+3
+00:00:06.752 --> 00:00:08.896
+service accounts work in Kubernetes.
+
+4
+00:00:08.896 --> 00:00:13.364
+You'll then learn about how to create and
+manage those accounts in GKE.
+
+5
+00:00:13.364 --> 00:00:16.008
+In Kubernetes,
+there are two main types of users.
+
+6
+00:00:16.008 --> 00:00:19.095
+Normal users and
+Kubernetes service accounts.
+
+7
+00:00:19.095 --> 00:00:21.357
+Be careful here,
+both Google Cloud platform and
+
+8
+00:00:21.357 --> 00:00:25.560
+Kubernetes have an entity called a service
+account but they're not the same.
+
+9
+00:00:25.560 --> 00:00:27.190
+I'll explain the difference in a minute.
+
+10
+00:00:27.190 --> 00:00:30.650
+For now, keep in mind that your day
+to day focus will be on normal users.
+
+11
+00:00:30.650 --> 00:00:33.320
+Normal users are managed
+outside of Kubernetes,
+
+12
+00:00:33.320 --> 00:00:36.970
+that is Kubernetes relies on
+external identity services.
+
+13
+00:00:36.970 --> 00:00:40.739
+That's through both in Kubernetes
+clusters that you built yourself,
+
+14
+00:00:40.739 --> 00:00:42.826
+as well as in those GKE manages for you.
+
+15
+00:00:42.826 --> 00:00:44.937
+When you use Kubernetes clusters in GKA,
+
+16
+00:00:44.937 --> 00:00:48.687
+you'll define most user accounts
+through Google's identity service.
+
+17
+00:00:48.687 --> 00:00:53.316
+Informally that encompasses the consumer
+Google accounts that you're familiar with,
+
+18
+00:00:53.316 --> 00:00:55.112
+plus accounts in G Suite domains.
+
+19
+00:00:55.112 --> 00:00:58.940
+If you don't have a G Suite domain you
+should get a Google Cloud identity domain
+
+20
+00:00:58.940 --> 00:01:02.719
+for your business, which is at no
+additional charge in most circumstances.
+
+21
+00:01:02.719 --> 00:01:06.443
+A cloud at any domain gives you much
+more organizational control than
+
+22
+00:01:06.443 --> 00:01:09.663
+using consumer Google accounts for
+all of your employees.
+
+23
+00:01:09.663 --> 00:01:13.710
+All these kinds of accounts together
+make up Google Cloud Identity.
+
+24
+00:01:13.710 --> 00:01:16.690
+We use the word member to refer to
+each individual identity defined by
+
+25
+00:01:16.690 --> 00:01:17.240
+the service.
+
+26
+00:01:18.430 --> 00:01:19.500
+It's a flexible service.
+
+27
+00:01:19.500 --> 00:01:21.840
+It lets you define user
+identities directly, or
+
+28
+00:01:21.840 --> 00:01:25.560
+mirror them from your existing directory
+service such as Active Directory.
+
+29
+00:01:25.560 --> 00:01:27.053
+It also lets you group users,
+
+30
+00:01:27.053 --> 00:01:30.293
+which turns out to be the key part
+of an important best practice.
+
+31
+00:01:30.293 --> 00:01:32.522
+I'll tell you about later in this module.
+
+32
+00:01:32.522 --> 00:01:36.064
+GCP is a clouds identity and
+access management service or
+
+33
+00:01:36.064 --> 00:01:40.289
+Cloud IAM is where buying permission
+in you GCP project to members.
+
+34
+00:01:40.289 --> 00:01:43.856
+And then you need tell Kubernetes about
+the members that you want to give
+
+35
+00:01:43.856 --> 00:01:45.769
+permission inside your clusters to.
+
+36
+00:01:45.769 --> 00:01:50.725
+Any cloud and any member can be configure
+as normal user GKE Kubernetes clusters.
+
+37
+00:01:50.725 --> 00:01:52.269
+In contrast to normal users,
+
+38
+00:01:52.269 --> 00:01:55.743
+Kubernetes service account
+are accounts manages by Kubernetes.
+
+39
+00:01:55.743 --> 00:01:59.501
+Kubernetes service accounts provide
+an identity for processes in a pod and
+
+40
+00:01:59.501 --> 00:02:02.073
+are used to interact with
+the Kubernetes cluster.
+
+41
+00:02:02.073 --> 00:02:04.996
+These are different from
+GCP service accounts.
+
+42
+00:02:04.996 --> 00:02:09.142
+Those are managed by Google Cloud
+identity, not Kubernetes and you use them
+
+43
+00:02:09.142 --> 00:02:13.482
+when you want GCP resources to have an
+identity that's tied to an application or
+
+44
+00:02:13.482 --> 00:02:15.450
+virtual machine not a human being.
+
+45
+00:02:15.450 --> 00:02:19.837
+You can even configure GCP service
+accounts as a normal Kubernetes user if
+
+46
+00:02:19.837 --> 00:02:21.333
+that proven necessary.
+
+47
+00:02:21.333 --> 00:02:25.490
+In Kubernetes, every name space has
+a default Kubernetes service account.
+
+48
+00:02:25.490 --> 00:02:29.455
+When processes in containers within a pod
+communicate with the cube API server,
+
+49
+00:02:29.455 --> 00:02:33.250
+they identify themselves as
+a Kubernetes service account.
+
+50
+00:02:33.250 --> 00:02:34.460
+If you're security sensitive,
+
+51
+00:02:34.460 --> 00:02:37.210
+you won't be worried about these
+Kubernetes service accounts.
+
+52
+00:02:37.210 --> 00:02:39.226
+What if an attacker compromised
+a container or a pod?
+
+53
+00:02:39.226 --> 00:02:41.935
+Could they grab service
+account credentials and
+
+54
+00:02:41.935 --> 00:02:43.857
+then use them in further attacks?
+
+55
+00:02:43.857 --> 00:02:44.950
+Yes, they could.
+
+56
+00:02:44.950 --> 00:02:48.656
+In Kubernetes 1.8 and higher,
+thanks to the implementation of RBAC,
+
+57
+00:02:48.656 --> 00:02:51.959
+service accounts have no default
+permissions or access tokens.
+
+58
+00:02:51.959 --> 00:02:55.162
+GKE only supports the last the three
+minor versions of Kubernetes.
+
+59
+00:02:55.162 --> 00:02:57.680
+So if you're running on GKE,
+you already have this enabled.
+
+60
+00:02:57.680 --> 00:03:00.529
+You don't have to worry about
+this potential problem.
+
+61
+00:03:00.529 --> 00:03:04.976
+After an account is authenticated, for
+example, a user authenticating via Cloud
+
+62
+00:03:04.976 --> 00:03:08.926
+identity, there are two main ways to
+authorize what that account can do.
+
+63
+00:03:08.926 --> 00:03:12.400
+One, Cloud Identity and
+Access Management or Cloud IAM.
+
+64
+00:03:12.400 --> 00:03:16.849
+And two, Kubernetes role-based
+access control or RBAC.
+
+65
+00:03:16.849 --> 00:03:18.743
+In fact, you need both controls.
+
+66
+00:03:18.743 --> 00:03:22.713
+Cloud IAM is the access control system for
+managing GCP resources.
+
+67
+00:03:22.713 --> 00:03:26.444
+It lets you grant permissions to users
+to perform operations at the project and
+
+68
+00:03:26.444 --> 00:03:27.810
+cluster levels.
+
+69
+00:03:27.810 --> 00:03:30.930
+In other words,
+outside your Kubernetes clusters.
+
+70
+00:03:30.930 --> 00:03:35.383
+On the other hand, Kubernetes RBAC, gives
+you access control inside your Kubernetes
+
+71
+00:03:35.383 --> 00:03:38.250
+clusters at the cluster level and
+the namespace level.
+
+72
+00:03:38.250 --> 00:03:42.642
+It lets you create fine tune rules in
+granular access to resources within
+
+73
+00:03:42.642 --> 00:03:43.511
+the cluster.
+
+74
+00:03:43.511 --> 00:03:46.155
+So you will use Cloud IAM
+to define who can view or
+
+75
+00:03:46.155 --> 00:03:48.882
+change the configuration
+of your GKE clusters.
+
+76
+00:03:48.882 --> 00:03:52.103
+And you'll use Cloud RBAC
+to define who can view or
+
+77
+00:03:52.103 --> 00:03:55.410
+change Kubernetes objects
+inside those cluster.
+
+78
+00:03:55.410 --> 00:03:56.780
+With both of these methods,
+
+79
+00:03:56.780 --> 00:04:00.158
+it's a best a practice to exercise
+the principle of least privilege.
+
+80
+00:04:00.158 --> 00:04:05.135
+Each person who has access to your cluster
+should have the minimum set of permissions
+
+81
+00:04:05.135 --> 00:04:06.127
+to do their job.
+
+82
+00:04:06.127 --> 00:04:12.333
+In Kubernetes, the API server listens for
+remote requests using HTTPS on port 443.
+
+83
+00:04:12.333 --> 00:04:15.960
+Each request must be authenticated
+before it's acted upon.
+
+84
+00:04:15.960 --> 00:04:19.340
+The API server can perform this
+authentication using various methods.
+
+85
+00:04:20.340 --> 00:04:25.640
+GKE supports as authentication methods,
+OpenID connect tokens,
+
+86
+00:04:25.640 --> 00:04:29.860
+x509 client certs and basic
+authentication using static passwords.
+
+87
+00:04:31.190 --> 00:04:36.000
+OpenID connect is a simple identity
+layer on top of the OAuth 2.0 protocol.
+
+88
+00:04:36.000 --> 00:04:40.320
+It lets clients verify the identity of
+an end user by crewing an authorization
+
+89
+00:04:40.320 --> 00:04:40.856
+server.
+
+90
+00:04:40.856 --> 00:04:44.922
+The clients can also get basic
+profile information about the end user
+
+91
+00:04:44.922 --> 00:04:46.333
+in interruptible way.
+
+92
+00:04:46.333 --> 00:04:48.199
+x509 client certificates and
+
+93
+00:04:48.199 --> 00:04:51.870
+static passwords present a wider
+surface of attack than OpenID.
+
+94
+00:04:51.870 --> 00:04:54.693
+Unless your application is using
+this methods of authentication,
+
+95
+00:04:54.693 --> 00:04:57.870
+you should disable them and use
+the OpenID authentication method instead.
+
+96
+00:04:59.020 --> 00:05:03.900
+In GKE, both x509 and static password
+authentication are disabled by default,
+
+97
+00:05:03.900 --> 00:05:07.130
+in clusters created with
+Kubernetes 1.12 and later.
+
+98
+00:05:07.130 --> 00:05:09.540
+This helps improve the default
+security configuration.
