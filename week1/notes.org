@@ -1,0 +1,10 @@
+* Architecting with Google Kubernetes Engine: Production
+** Week 1
+*** Kubernetes control plane security
+The referenced doc in the lecture is https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata
+
+[[https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#concealment][Metadata Conecealment]] has a depracation warning in favor of [[https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity][Workload Identity (beta)]]
+
+#+BEGIN_QUOTE
+Warning: Workload Identity replaces the need to use metadata concealment and the two approaches are incompatible. We recommend that you use Workload Identity instead of metadata concealment. Metadata concealment is scheduled to be deprecated and removed in the future.
+#+END_QUOTE
