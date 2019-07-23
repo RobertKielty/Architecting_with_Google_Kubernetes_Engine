@@ -46,7 +46,7 @@ between the master
 
 11
 00:00:22.665 --> 00:00:24.210
-and nodes at a cluster,
+and nodes in a cluster,
 
 12
 00:00:24.210 --> 00:00:25.680
@@ -252,11 +252,11 @@ rotate credentials often.
 55
 00:01:54.860 --> 00:01:56.860
 But whenever you
-do, the clusters to
+do, the clusters
 
 56
 00:01:56.860 --> 00:01:59.410
-API servers unavailable for
+kube-apiserver is unavailable for
 a short period of time.
 
 57
@@ -266,7 +266,7 @@ that that trade-off
 
 58
 00:02:01.355 --> 00:02:03.725
-works for your organization
+works for your organization's
 security policies.
 
 59
@@ -281,7 +281,7 @@ the credentials used by
 61
 00:02:06.650 --> 00:02:09.395
 the API server and clients
-during a lot of activity.
+during a lab activity.
 
 62
 00:02:09.395 --> 00:02:12.080
@@ -290,7 +290,7 @@ rotate the etcd certificates
 
 63
 00:02:12.080 --> 00:02:15.320
-and GKE since they are
+in GKE since they are
 managed entirely by Google.
 
 64
@@ -328,7 +328,7 @@ although pods continue to run.
 
 71
 00:02:32.075 --> 00:02:34.309
-After the masters reconfigured,
+After the master is reconfigured,
 
 72
 00:02:34.309 --> 00:02:35.990
@@ -478,13 +478,13 @@ minimal permissions.
 
 104
 00:03:41.090 --> 00:03:43.100
-Don't confuse as
+Don't confuse the
 Google service account
 
 105
 00:03:43.100 --> 00:03:44.675
 with the Kurbenetes
-Service a account.
+Service account.
 
 106
 00:03:44.675 --> 00:03:46.760
@@ -503,7 +503,7 @@ compute.instances.get
 109
 00:03:52.060 --> 00:03:53.700
 permission through
-service account,
+a service account,
 
 110
 00:03:53.700 --> 00:03:55.440
@@ -584,7 +584,7 @@ a new cluster or adding
 
 127
 00:04:32.440 --> 00:04:34.770
-a new node port to
+a new node pool to
 an existing cluster.
 
 128
@@ -613,11 +613,11 @@ restricting access
 
 133
 00:04:45.110 --> 00:04:46.865
-to cube NF which contains
+to kube env which contains
 
 134
 00:04:46.865 --> 00:04:48.500
-cubic credentials and
+kubelet credentials and
 
 135
 00:04:48.500 --> 00:04:50.885

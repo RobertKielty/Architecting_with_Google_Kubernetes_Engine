@@ -2,7 +2,7 @@ Next, let's learn more about Kubernetes Control
 Plane Security. In GKE, all the master components
 such as the API server, etcd database, and Controller Manager are managed by Google. Each cluster has its own
 root Certificate Authority, (CA) for short. An internal Google service manages the root keys for the CA. Secure communications
-between the master and nodes at a cluster, relies on the shared
+between the master and nodes in a cluster, relies on the shared
 root of trust provided by the certificates
 issued by the CA. GKE uses a separate
 per cluster CA to provide certificates for the etcd databases within a cluster. You don't have to do
@@ -32,19 +32,19 @@ limit the impact of a potential security breach that can compromise credentials.
 it's a trade off. If a cluster manages
 high-value assets, you probably want to
 rotate credentials often. But whenever you
-do, the clusters to API servers unavailable for
+do, the clusters kube-apiserver server is unavailable for
 a short period of time. So you need to make sure
-that that trade-off works for your organization
+that that trade-off works for your organization's
 security policies. You'll learn how
 to manually rotate the credentials used by the API server and clients
-during a lot of activity. Note that you can't manually
-rotate the etcd certificates and GKE since they are
+during a lab activity. Note that you can't manually
+rotate the etcd certificates in GKE since they are
 managed entirely by Google. Let's look at an overview
 of the rotation process. The process starts by
 creating a new IP address for the cluster master along with
 its existing IP address. New credentials are issued
 to the control plane. Note that the API
-server will not be available during this period although pods continue to run. After the masters reconfigured, the nodes are
+server will not be available during this period although pods continue to run. After the master is reconfigured, the nodes are
 automatically updated by GKE to use the new IP
 and credentials. This causes GKE to
 also automatically upgrade the node version to the closest supported version. All of your API clients
@@ -62,11 +62,11 @@ they're running on, such as the node secret that is used for node configuration.
 used in unintended ways. To prevent such exposure, there are a few steps
 that you can take. First, you should
 always configure the Cloud IAM service account for the node with
-minimal permissions. Don't confuse as
+minimal permissions. Don't confuse the
 Google service account with the Kurbenetes
-Service a account. This is the Cloud IAM
+Service account. This is the Cloud IAM
 service account used by the node VM itself. Don't use the
-compute.instances.get permission through
+compute.instances.get permission through a
 service account, compute instance admin role, or any custom roles. Omitting this permission
 blocks holders of the role from
 getting metadata on GKE nodes by making direct Compute Engine API
@@ -76,12 +76,12 @@ endpoints using versions 0.1 and V1 beta-1, support querying of metadata. The V1
 the retrieval of metadata. Starting from GKE version 1.12, the legacy Compute Engine
 metadata endpoints are disabled by default and with
 earlier versions, they can only be
-disabled by creating a new cluster or adding a new node port to
+disabled by creating a new cluster or adding a new node pool to
 an existing cluster. One further important
 security step is to enable metadata
 concealment. This is basically a firewall that prevents pod from accessing
 a nodes metadata. It does this by
-restricting access to cube NF which contains cubic credentials and the virtual machines instance
+restricting access to kube env which contains kubelet credentials and the virtual machines instance
 identity token. Note that this is a temporary
 solution that will be deprecated as better
 security improvements are developed in the future. There's a link associated
